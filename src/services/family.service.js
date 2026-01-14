@@ -1,0 +1,26 @@
+import { Family } from "../models/family.model.js";
+
+export const createFamily = async (data) => {
+    const family = new Family(data);
+    return await family.save();
+};
+
+export const getFamily = async (familyId) => {
+    return await Family.findById(familyId);
+};
+
+export const updateFamily = async (familyId, updateData) => {
+    const updatedFamily = await Family.findByIdAndUpdate(
+        familyId,
+        { $set: updateData },
+        { new: true, runValidators: true }
+    );
+
+    if (!updatedFamily) throw new Error('Famille non trouvé.');
+  
+    return updatedFamily;
+};
+
+export const deleteFamily = async (familyId) => {
+    return await Family.findByIdAndDelete(familyId);
+};

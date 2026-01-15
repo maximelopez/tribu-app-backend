@@ -20,7 +20,7 @@ export const createUser = async (req, res) => {
         const user = await userService.createUser(req.body);
         res.status(201).json(user);
     } catch (error) {
-        res.status(400).json({ message: 'Impossible de créer l’utilisateur', error: error.message });
+        res.status(409).json({ message: 'Impossible de créer l’utilisateur', error: error.message });
     }
 };
 

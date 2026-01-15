@@ -38,7 +38,7 @@ export const loginUser = async (email, password) => {
 // Création de l'utilisateur + connexion automatique
 export const createUser = async (data) => {
     const existingUser = await User.findOne({ email: data.email });
-    if (existingUser) throw new Error('Cet email est déjà utilisé.');
+    if (existingUser) throw new Error('Cet email est déjà utilisé');
 
     const hashedPassword = await bcrypt.hash(data.password, 10);
 
@@ -75,7 +75,7 @@ export const updateProfile = async (userId, updateData) => {
     { new: true, runValidators: true }
   );
 
-  if (!updatedUser) throw new Error('Utilisateur non trouvé.');
+  if (!updatedUser) throw new Error('Utilisateur non trouvé');
 
   return {
     id: updatedUser._id,
@@ -95,7 +95,7 @@ export const updateScore = async (userId, score) => {
   );
 
   if (!updatedUser) {
-    throw new Error('Utilisateur non trouvé.');
+    throw new Error('Utilisateur non trouvé');
   }
 
   return {
@@ -111,7 +111,7 @@ export const updateScore = async (userId, score) => {
 export const deleteProfile = async (userId) => {
   const deletedUser = await User.findByIdAndDelete(userId);
   if (!deletedUser) {
-    throw new Error('Utilisateur non trouvé.');
+    throw new Error('Utilisateur non trouvé');
   }
   return;
 };
@@ -125,7 +125,7 @@ export const addUserToFamily = async (userId, familyId) => {
   );
 
   if (!updatedUser) {
-    throw new Error('Utilisateur non trouvé.');
+    throw new Error('Utilisateur non trouvé');
   }
 
   return {

@@ -7,11 +7,15 @@ const familySchema = mongoose.Schema({
     },
     address: {
         type: String,
-        required: [true, 'L\'adresse est obligatoire']
+        default: null
     },
     phone: {
         type: String,
-        required: [true, 'Le numéro de téléphone est obligatoire']
+        default: null
+    },
+    avatarUrl: {
+        type: String,
+        default: null
     }
 }, { timestamps: true });
 

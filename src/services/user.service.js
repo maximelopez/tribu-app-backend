@@ -57,7 +57,8 @@ export const getProfile = async (userId) => {
       name: user.name, 
       email: user.email, 
       score: user.score,
-      familyId: user.familyId
+      familyId: user.familyId,
+      avatarUrl: user.avatarUrl,
     } 
   };
 }
@@ -82,7 +83,8 @@ export const updateProfile = async (userId, updateData) => {
     name: updatedUser.name,
     email: updatedUser.email,
     score: updatedUser.score,
-    familyId: updatedUser.familyId
+    familyId: updatedUser.familyId,
+    avatarUrl: updatedUser.avatarUrl,
   };
 };
 
@@ -103,7 +105,8 @@ export const updateScore = async (userId, score) => {
     name: updatedUser.name,
     email: updatedUser.email,
     score: updatedUser.score,
-    familyId: updatedUser.familyId
+    familyId: updatedUser.familyId,
+    avatarUrl: updatedUser.avatarUrl,
   };
 };
 
@@ -133,6 +136,7 @@ export const addUserToFamily = async (userId, familyId) => {
     name: updatedUser.name,
     email: updatedUser.email,
     score: updatedUser.score,
-    familyId: updatedUser.familyId
+    familyId: updatedUser.familyId,
+    avatarUrl: updatedUser.avatarUrl,
   };
 };

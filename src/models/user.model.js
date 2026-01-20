@@ -27,6 +27,10 @@ const userSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'Family',
         default: null
+    },
+    avatarUrl: {
+        type: String,
+        default: null
     }
 }, { timestamps: true });
 

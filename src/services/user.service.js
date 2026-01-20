@@ -29,7 +29,8 @@ export const loginUser = async (email, password) => {
       name: user.name, 
       email: user.email, 
       score: user.score,
-      familyId: user.familyId
+      familyId: user.familyId,
+      avatarUrl: user.avatarUrl,
     }, 
     token 
   };

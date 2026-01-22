@@ -9,6 +9,25 @@ export const createFamily = async (req, res) => {
     }
 };
 
+export const searchFamilies = async (req, res) => {
+    try {
+        const { search } = req.query;
+
+        if (!search) {
+            return res.status(200).json({ families: [] });
+        }
+
+        const families = await familyService.searchFamilies(search);
+        res.status(200).json({ families });
+
+    } catch (error) {
+        res.status(400).json({
+            message: 'Impossible de rechercher les familles',
+            error: error.message,
+        });
+    }
+};
+
 export const getFamily = async (req, res) => {
     try {
         const familyId = req.params.id;

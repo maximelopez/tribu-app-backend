@@ -25,6 +25,6 @@ router.delete('/:id', authMiddleware, deleteProfile);
 router.put('/:id/score', updateScore);
 
 // Famille
-router.put('/:id/family', authMiddleware, addUserToFamily);
+router.put('/:id/family', addUserToFamily);
 
 export default router;

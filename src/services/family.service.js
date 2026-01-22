@@ -2,11 +2,23 @@ import { Family } from "../models/family.model.js";
 
 export const createFamily = async (data) => {
     const family = new Family(data);
-    return await family.save();
+    await family.save();
+    return {
+        family: {
+            id: family._id,
+            city: family.city,
+        }
+    };
 };
 
 export const getFamily = async (familyId) => {
-    return await Family.findById(familyId);
+    const family = await Family.findById(familyId);
+    return {
+        family: {
+            id: family._id,
+            city: family.city,
+        }
+    };
 };
 
 export const updateFamily = async (familyId, updateData) => {

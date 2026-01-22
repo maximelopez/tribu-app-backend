@@ -5,17 +5,9 @@ const familySchema = mongoose.Schema({
         type: String,
         required: [true, 'Le nom est obligatoire']
     },
-    address: {
+    city: {
         type: String,
-        default: null
-    },
-    phone: {
-        type: String,
-        default: null
-    },
-    avatarUrl: {
-        type: String,
-        default: null
+        required: [true, 'La ville est obligatoire']
     }
 }, { timestamps: true });
 

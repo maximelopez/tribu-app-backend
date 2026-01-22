@@ -5,15 +5,15 @@ import { authMiddleware } from '../middlewares/auth.middleware.js';
 const router = Router();
 
 // Créer une famille
-router.post('/', authMiddleware, createFamily);
+router.post('/', createFamily);
 
 // Voir une famille
-router.get('/:id', authMiddleware, getFamily);
+router.get('/:id', getFamily);
 
 // Mettre à jour une famille
-router.put('/:id', authMiddleware, updateFamily);
+router.put('/:id', updateFamily);
 
 // Supprimer une famille
-router.delete('/:id', authMiddleware, deleteFamily);
+router.delete('/:id', deleteFamily);
 
 export default router;

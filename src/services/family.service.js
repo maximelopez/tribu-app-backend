@@ -6,6 +6,7 @@ export const createFamily = async (data) => {
     return {
         family: {
             id: family._id,
+            name: family.name,
             city: family.city,
         }
     };
@@ -16,6 +17,7 @@ export const getFamily = async (familyId) => {
     return {
         family: {
             id: family._id,
+            name: family.name,
             city: family.city,
         }
     };

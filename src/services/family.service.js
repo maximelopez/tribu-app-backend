@@ -1,91 +1,148 @@
 import { Family } from "../models/family.model.js";
 
+/**
+ * Créer une famille
+ */
 export const createFamily = async (data, creatorId) => {
-    const family = new Family({ ...data, creatorId });
+  const family = new Family({
+    ...data,
+    creatorId,
+  });
 
-    await family.save();
+  await family.save();
 
-    return {
-        family: {
-            id: family._id,
-            name: family.name,
-            city: family.city,
-            slogan: family.slogan,
-            themes: family.themes,
-            creatorId: family.creatorId,
-            joinRequests: family.joinRequests
-        }
-    };
+  return {
+    family: {
+      id: family._id,
+      name: family.name,
+      city: family.city,
+      slogan: family.slogan,
+      themes: family.themes,
+      creatorId: family.creatorId,
+      joinRequests: family.joinRequests,
+    },
+  };
 };
 
+/**
+ * Rechercher des familles
+ */
 export const searchFamilies = async (search) => {
-    const families = await Family.find({
-        name: { $regex: search, $options: 'i' }
-    }).limit(20);
+  const families = await Family.find({
+    name: { $regex: search, $options: "i" },
+  }).limit(20);
 
-    return families.map(family => ({
-        id: family._id,
-        name: family.name,
-        city: family.city,
-        slogan: family.slogan,
-        themes: family.themes,
-    }));
+  return families.map((family) => ({
+    id: family._id,
+    name: family.name,
+    city: family.city,
+    slogan: family.slogan,
+    themes: family.themes,
+    creatorId: family.creatorId,
+    joinRequests: family.joinRequests,
+  }));
 };
 
+/**
+ * Récupérer une famille
+ */
 export const getFamily = async (familyId) => {
-    const family = await Family.findById(familyId);
-    return {
-        family: {
-            id: family._id,
-            name: family.name,
-            city: family.city,
-            slogan: family.slogan,
-            themes: family.themes,
-        }
-    };
-};
-
-export const updateFamily = async (familyId, updateData) => {
-    const updatedFamily = await Family.findByIdAndUpdate(
-        familyId,
-        { $set: updateData },
-        { new: true, runValidators: true }
-    );
-
-    if (!updatedFamily) throw new Error('Famille non trouvé.');
-  
-    return updatedFamily;
-};
-
-// Ajouter une demande de rejoindre la famille
-export const requestToJoinFamily = async (familyId, userId) => {
   const family = await Family.findById(familyId);
-  if (!family) throw new Error('Famille non trouvée');
 
-  // Vérifie que l’utilisateur n’a pas déjà fait une demande
-  if (family.joinRequests.includes(userId)) {
-    throw new Error('Vous avez déjà envoyé une demande à cette famille');
+  if (!family) {
+    throw new Error("Famille non trouvée");
   }
 
-  // Ajouter la demande
+  return {
+    family: {
+      id: family._id,
+      name: family.name,
+      city: family.city,
+      slogan: family.slogan,
+      themes: family.themes,
+      creatorId: family.creatorId,
+      joinRequests: family.joinRequests,
+    },
+  };
+};
+
+/**
+ * Mettre à jour une famille
+ */
+export const updateFamily = async (familyId, updateData) => {
+  const updatedFamily = await Family.findByIdAndUpdate(
+    familyId,
+    { $set: updateData },
+    { new: true, runValidators: true }
+  );
+
+  if (!updatedFamily) {
+    throw new Error("Famille non trouvée");
+  }
+
+  return updatedFamily;
+};
+
+/**
+ * Envoyer une demande pour rejoindre une famille
+ */
+export const requestToJoinFamily = async (familyId, userId) => {
+  const family = await Family.findById(familyId);
+  if (!family) {
+    throw new Error("Famille non trouvée");
+  }
+
+  // ❌ Déjà demandé
+  const alreadyRequested = family.joinRequests.some(
+    (id) => id.toString() === userId
+  );
+
+  if (alreadyRequested) {
+    throw new Error("Vous avez déjà envoyé une demande à cette famille");
+  }
+
   family.joinRequests.push(userId);
   await family.save();
 
   return family;
 };
 
-// Accepter ou refuser une demande
+/**
+ * Accepter ou refuser une demande
+ */
 export const handleJoinRequest = async (familyId, userId, accept) => {
   const family = await Family.findById(familyId);
-  if (!family) throw new Error('Famille non trouvée');
+  if (!family) {
+    throw new Error("Famille non trouvée");
+  }
 
-  // Retire la demande
-  family.joinRequests = family.joinRequests.filter(id => id.toString() !== userId);
+  const requestExists = family.joinRequests.some(
+    (id) => id.toString() === userId
+  );
+
+  if (!requestExists) {
+    throw new Error("Aucune demande trouvée pour cet utilisateur");
+  }
+
+  // Retirer la demande
+  family.joinRequests = family.joinRequests.filter(
+    (id) => id.toString() !== userId
+  );
+
   await family.save();
 
   return family;
 };
 
+/**
+ * Supprimer une famille
+ */
 export const deleteFamily = async (familyId) => {
-    return await Family.findByIdAndDelete(familyId);
+  const deletedFamily = await Family.findByIdAndDelete(familyId);
+
+  if (!deletedFamily) {
+    throw new Error("Famille non trouvée");
+  }
+
+  return deletedFamily;
 };

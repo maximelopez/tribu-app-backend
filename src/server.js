@@ -4,23 +4,26 @@ import { Server } from 'socket.io';
 
 const PORT = process.env.PORT || 3000;
 
-// Crée le serveur HTTP à partir de l'app Express
 const server = http.createServer(app);
 
 // Initialise Socket.IO
 export const io = new Server(server, {
   cors: {
-    origin: '*', // adapter selon ton app
+    origin: '*',
   },
 });
 
 io.on('connection', (socket) => {
   console.log('Un client est connecté :', socket.id);
 
-  // Permet de rejoindre une room par familyId
+  socket.on('registerUser', (userId) => {
+    socket.join(`user:${userId}`);
+    console.log(`Socket ${socket.id} rejoint user:${userId}`);
+  });
+
   socket.on('joinFamilyRoom', (familyId) => {
-    socket.join(familyId);
-    console.log(`Socket ${socket.id} rejoint la room ${familyId}`);
+    socket.join(`family:${familyId}`);
+    console.log(`Socket ${socket.id} rejoint family:${familyId}`);
   });
 
   socket.on('disconnect', () => {

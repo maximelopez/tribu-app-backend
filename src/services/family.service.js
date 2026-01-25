@@ -8,6 +8,8 @@ export const createFamily = async (data) => {
             id: family._id,
             name: family.name,
             city: family.city,
+            slogan: family.slogan,
+            themes: family.themes,
         }
     };
 };
@@ -21,6 +23,8 @@ export const searchFamilies = async (search) => {
         id: family._id,
         name: family.name,
         city: family.city,
+        slogan: family.slogan,
+        themes: family.themes,
     }));
 };
 
@@ -31,6 +35,8 @@ export const getFamily = async (familyId) => {
             id: family._id,
             name: family.name,
             city: family.city,
+            slogan: family.slogan,
+            themes: family.themes,
         }
     };
 };

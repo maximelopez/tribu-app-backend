@@ -8,7 +8,15 @@ const familySchema = mongoose.Schema({
     city: {
         type: String,
         required: [true, 'La ville est obligatoire']
-    }
+    },
+    slogan: {
+        type: String,
+        default: null,
+    },
+    themes: {
+        type: [String],
+        default: []
+    },
 }, { timestamps: true });
 
 export const Family = mongoose.model('Family', familySchema);

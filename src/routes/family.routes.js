@@ -4,7 +4,8 @@ import {
     searchFamilies,
     getFamily,
     updateFamily,
-    requestToJoinFamily,
+    sendJoinRequest,
+    respondJoinRequest,
     deleteFamily
 } from '../controllers/family.controller.js';
 import { authMiddleware } from '../middlewares/auth.middleware.js';
@@ -15,7 +16,8 @@ router.post('/', createFamily);
 router.get('/', searchFamilies);
 router.get('/:id', getFamily);
 router.put('/:id', updateFamily);
-router.put('/:id/request', requestToJoinFamily);
+router.put('/join-request', sendJoinRequest);
+router.put('/respond-request', respondJoinRequest)
 router.delete('/:id', deleteFamily);
 
 export default router;

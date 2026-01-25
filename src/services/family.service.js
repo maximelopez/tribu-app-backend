@@ -57,16 +57,33 @@ export const updateFamily = async (familyId, updateData) => {
     return updatedFamily;
 };
 
-export const requestToJoinFamily = async (userId, familyId) => {
-    const family = await Family.findById(familyId);
-    if (!family) throw new Error('Famille non trouvée');
+// Ajouter une demande de rejoindre la famille
+export const requestToJoinFamily = async (familyId, userId) => {
+  const family = await Family.findById(familyId);
+  if (!family) throw new Error('Famille non trouvée');
 
-    if (family.joinRequests.includes(userId)) throw new Error('Vous avez déjà envoyé une demande');
+  // Vérifie que l’utilisateur n’a pas déjà fait une demande
+  if (family.joinRequests.includes(userId)) {
+    throw new Error('Vous avez déjà envoyé une demande à cette famille');
+  }
 
-    family.joinRequests.push(userId);
-    await family.save();
+  // Ajouter la demande
+  family.joinRequests.push(userId);
+  await family.save();
 
-    return { message: 'Demande envoyée au créateur de la famille' };
+  return family;
+};
+
+// Accepter ou refuser une demande
+export const handleJoinRequest = async (familyId, userId, accept) => {
+  const family = await Family.findById(familyId);
+  if (!family) throw new Error('Famille non trouvée');
+
+  // Retire la demande
+  family.joinRequests = family.joinRequests.filter(id => id.toString() !== userId);
+  await family.save();
+
+  return family;
 };
 
 export const deleteFamily = async (familyId) => {

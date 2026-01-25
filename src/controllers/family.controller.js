@@ -72,16 +72,39 @@ export const updateFamily = async (req, res) => {
     }
 };
 
-export const requestToJoinFamily = async (req, res) => {
-    try {
-        const familyId = req.params.id;
-        const userId = req.body.userId;
+// Envoyer une demande
+export const sendJoinRequest = async (req, res) => {
+  try {
+    const { familyId, userId } = req.body;
+    const family = await familyService.requestToJoinFamily(familyId, userId);
 
-        const result = await familyService.requestToJoinFamily(userId, familyId);
-        res.status(200).json(result);
-    } catch (error) {
-        res.status(400).json({ message: 'Impossible d’envoyer la demande.', error: error.message });
+    // ⚡ Émettre un événement à creatorId via WebSocket
+    io.to(family.creatorId.toString()).emit('newJoinRequest', { userId, familyId });
+
+    res.status(200).json({ message: 'Demande envoyée', family });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+// Accepter ou refuser une demande
+export const respondJoinRequest = async (req, res) => {
+  try {
+    const { familyId, userId, accept } = req.body;
+    const family = await familyService.handleJoinRequest(familyId, userId, accept);
+
+    if (accept) {
+      // ⚡ Mettre à jour le user pour lui assigner la famille
+      const updatedUser = await User.findByIdAndUpdate(userId, { familyId }, { new: true });
+      io.to(userId).emit('familyAccepted', { familyId });
+    } else {
+      io.to(userId).emit('familyRejected', { familyId });
     }
+
+    res.status(200).json({ message: 'Demande traitée', family });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
 };
 
 export const deleteFamily = async (req, res) => {

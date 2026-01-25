@@ -1,8 +1,10 @@
 import { Family } from "../models/family.model.js";
 
-export const createFamily = async (data) => {
-    const family = new Family(data);
+export const createFamily = async (data, creatorId) => {
+    const family = new Family({ ...data, creatorId });
+
     await family.save();
+
     return {
         family: {
             id: family._id,
@@ -10,6 +12,8 @@ export const createFamily = async (data) => {
             city: family.city,
             slogan: family.slogan,
             themes: family.themes,
+            creatorId: family.creatorId,
+            joinRequests: family.joinRequests
         }
     };
 };
@@ -51,6 +55,18 @@ export const updateFamily = async (familyId, updateData) => {
     if (!updatedFamily) throw new Error('Famille non trouvé.');
   
     return updatedFamily;
+};
+
+export const requestToJoinFamily = async (userId, familyId) => {
+    const family = await Family.findById(familyId);
+    if (!family) throw new Error('Famille non trouvée');
+
+    if (family.joinRequests.includes(userId)) throw new Error('Vous avez déjà envoyé une demande');
+
+    family.joinRequests.push(userId);
+    await family.save();
+
+    return { message: 'Demande envoyée au créateur de la famille' };
 };
 
 export const deleteFamily = async (familyId) => {

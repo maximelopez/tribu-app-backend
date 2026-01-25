@@ -17,6 +17,14 @@ const familySchema = mongoose.Schema({
         type: [String],
         default: []
     },
+    creatorId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
+    joinRequests: [
+        { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+    ]
 }, { timestamps: true });
 
 export const Family = mongoose.model('Family', familySchema);

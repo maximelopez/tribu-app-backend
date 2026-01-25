@@ -1,4 +1,5 @@
 import * as familyService from '../services/family.service.js';
+import { io } from '../server.js';
 
 export const createFamily = async (req, res) => {
     try {
@@ -44,8 +45,26 @@ export const updateFamily = async (req, res) => {
         const familyId = req.params.id;
         const updateData = req.body;
 
-        const updateFamily = await familyService.updateFamily(familyId, updateData);
-        res.status(200).json(updateFamily);
+        const updatedFamily = await familyService.updateFamily(familyId, updateData);
+
+        // Émettre l'événement à tous les sockets dans la room de la famille
+        io.to(familyId).emit('familyUpdated', {
+            id: updatedFamily._id,
+            name: updatedFamily.name,
+            city: updatedFamily.city,
+            slogan: updatedFamily.slogan,
+            themes: updatedFamily.themes,
+        });
+
+        res.status(200).json({
+            family: {
+                id: updatedFamily._id,
+                name: updatedFamily.name,
+                city: updatedFamily.city,
+                slogan: updatedFamily.slogan,
+                themes: updatedFamily.themes,
+            }
+        });
     } catch (error) {
         res.status(400).json({ message: 'Impossible de mettre à jour la famille.', error: error.message });
     }

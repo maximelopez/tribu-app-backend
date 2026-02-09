@@ -47,11 +47,18 @@ export const searchFamilies = async (search) => {
  * Récupérer une famille
  */
 export const getFamily = async (familyId) => {
-  const family = await Family.findById(familyId);
+  const family = await Family.findById(familyId)
+    .populate('joinRequests', 'name');
 
   if (!family) {
     throw new Error("Famille non trouvée");
   }
+
+  // Transforme joinRequests en tableau {id, name}
+  const joinRequestsWithNames = family.joinRequests.map(user => ({
+    id: user._id,
+    name: user.name
+  }));
 
   return {
     family: {
@@ -61,7 +68,7 @@ export const getFamily = async (familyId) => {
       slogan: family.slogan,
       themes: family.themes,
       creatorId: family.creatorId,
-      joinRequests: family.joinRequests,
+      joinRequests: joinRequestsWithNames,
     },
   };
 };
@@ -83,60 +90,66 @@ export const updateFamily = async (familyId, updateData) => {
   return updatedFamily;
 };
 
-/**
- * Envoyer une demande pour rejoindre une famille
- */
+// Envoyer une demande pour rejoindre une famille
 export const requestToJoinFamily = async (familyId, userId) => {
   const family = await Family.findById(familyId);
-  if (!family) {
-    throw new Error("Famille non trouvée");
-  }
+  if (!family) throw new Error("Famille non trouvée");
 
   // ❌ Déjà demandé
-  const alreadyRequested = family.joinRequests.some(
-    (id) => id.toString() === userId
-  );
-
-  if (alreadyRequested) {
-    throw new Error("Vous avez déjà envoyé une demande à cette famille");
-  }
+  const alreadyRequested = family.joinRequests.some(id => id.toString() === userId);
+  if (alreadyRequested) throw new Error("Vous avez déjà envoyé une demande à cette famille");
 
   family.joinRequests.push(userId);
   await family.save();
 
-  return family;
+  // Retourne la famille avec joinRequests peuplé
+  const populatedFamily = await Family.findById(familyId).populate('joinRequests', 'name');
+
+  const joinRequestsWithNames = populatedFamily.joinRequests.map(user => ({
+    id: user._id,
+    name: user.name
+  }));
+
+  return {
+    ...populatedFamily.toObject(),
+    joinRequests: joinRequestsWithNames
+  };
 };
 
-/**
- * Accepter ou refuser une demande
- */
+// Accepter ou refuser une demande
 export const handleJoinRequest = async (familyId, userId, accept) => {
   const family = await Family.findById(familyId);
-  if (!family) {
-    throw new Error("Famille non trouvée");
-  }
+  if (!family) throw new Error("Famille non trouvée");
 
-  const requestExists = family.joinRequests.some(
-    (id) => id.toString() === userId
-  );
-
-  if (!requestExists) {
-    throw new Error("Aucune demande trouvée pour cet utilisateur");
-  }
+  const requestExists = family.joinRequests.some(id => id.toString() === userId);
+  if (!requestExists) throw new Error("Aucune demande trouvée pour cet utilisateur");
 
   // Retirer la demande
-  family.joinRequests = family.joinRequests.filter(
-    (id) => id.toString() !== userId
-  );
+  family.joinRequests = family.joinRequests.filter(id => id.toString() !== userId);
 
   await family.save();
 
-  return family;
+  // Peupler joinRequests pour renvoyer {id, name}
+  const populatedFamily = await Family.findById(familyId).populate('joinRequests', 'name');
+
+  const joinRequestsWithNames = populatedFamily.joinRequests.map(user => ({
+    id: user._id,
+    name: user.name
+  }));
+
+  // Retourner la famille avec joinRequests prêt pour le front
+  return {
+    id: populatedFamily._id,
+    name: populatedFamily.name,
+    city: populatedFamily.city,
+    slogan: populatedFamily.slogan,
+    themes: populatedFamily.themes,
+    creatorId: populatedFamily.creatorId,
+    joinRequests: joinRequestsWithNames,
+  };
 };
 
-/**
- * Supprimer une famille
- */
+// Supprimer une famille
 export const deleteFamily = async (familyId) => {
   const deletedFamily = await Family.findByIdAndDelete(familyId);
 

@@ -17,7 +17,7 @@ router.post('/login', loginUser);
 router.post('/signup', createUser);
 
 // User
-router.get('/:id', authMiddleware, getProfile);
+router.get('/:id', getProfile);
 router.put('/:id', authMiddleware, updateProfile);
 router.delete('/:id', authMiddleware, deleteProfile);
 

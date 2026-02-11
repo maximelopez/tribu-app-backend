@@ -4,9 +4,9 @@ import {
     updateProfile, 
     deleteProfile, 
     updateScore, 
-    addUserToFamily 
+    addUserToFamily,
+    getUsersByFamily
 } from '../controllers/user.controller.js';
-import { authMiddleware } from '../middlewares/auth.middleware.js';
 
 const router = Router();
 
@@ -15,5 +15,7 @@ router.patch('/:id', updateProfile);
 router.delete('/:id', deleteProfile);
 router.patch('/:id/score', updateScore);
 router.patch('/:id/family', addUserToFamily);
+
+router.get('/', getUsersByFamily);
 
 export default router;

@@ -164,3 +164,16 @@ export const addUserToFamily = async (userId, familyId) => {
     avatarUrl: updatedUser.avatarUrl,
   };
 };
+
+// Récupérer tous les utilisateurs d'une famille
+export const getUsersByFamily = async (familyId) => {
+  const users = await User.find({ familyId }).select('name score _id avatarUrl'); 
+  // tu peux ajouter d'autres champs que tu veux exposer côté front
+
+  return users.map(user => ({
+    id: user._id,
+    name: user.name,
+    score: user.score,
+    avatarUrl: user.avatarUrl,
+  }));
+};

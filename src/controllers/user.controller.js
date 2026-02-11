@@ -74,3 +74,15 @@ export const addUserToFamily = async (req, res) => {
         });
     }
 };
+
+export const getUsersByFamily = async (req, res) => {
+  try {
+    const { familyId } = req.query;
+    if (!familyId) return res.status(400).json({ message: 'familyId manquant' });
+
+    const users = await userService.getUsersByFamily(familyId);
+    res.status(200).json({ users });
+  } catch (error) {
+    res.status(400).json({ message: 'Impossible de récupérer les membres', error: error.message });
+  }
+};

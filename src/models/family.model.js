@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const familySchema = mongoose.Schema({
+const familySchema = new mongoose.Schema({
     name: {
         type: String,
         required: [true, 'Le nom est obligatoire']

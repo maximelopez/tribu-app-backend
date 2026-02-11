@@ -1,7 +1,5 @@
 import { Router } from 'express';
-import { 
-    createUser, 
-    loginUser, 
+import {  
     getProfile, 
     updateProfile, 
     deleteProfile, 
@@ -12,19 +10,10 @@ import { authMiddleware } from '../middlewares/auth.middleware.js';
 
 const router = Router();
 
-// Authentification
-router.post('/login', loginUser);
-router.post('/signup', createUser);
-
-// User
 router.get('/:id', getProfile);
-router.put('/:id', authMiddleware, updateProfile);
-router.delete('/:id', authMiddleware, deleteProfile);
-
-// Score
-router.put('/:id/score', updateScore);
-
-// Famille
-router.put('/:id/family', addUserToFamily);
+router.patch('/:id', updateProfile);
+router.delete('/:id', deleteProfile);
+router.patch('/:id/score', updateScore);
+router.patch('/:id/family', addUserToFamily);
 
 export default router;

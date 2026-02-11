@@ -1,8 +1,6 @@
 import { Family } from "../models/family.model.js";
 
-/**
- * Créer une famille
- */
+// Créer une famille
 export const createFamily = async (data, creatorId) => {
   const family = new Family({
     ...data,
@@ -24,9 +22,7 @@ export const createFamily = async (data, creatorId) => {
   };
 };
 
-/**
- * Rechercher des familles
- */
+// Rechercher des familles
 export const searchFamilies = async (search) => {
   const families = await Family.find({
     name: { $regex: search, $options: "i" },
@@ -43,9 +39,7 @@ export const searchFamilies = async (search) => {
   }));
 };
 
-/**
- * Récupérer une famille
- */
+// Récupérer une famille
 export const getFamily = async (familyId) => {
   const family = await Family.findById(familyId)
     .populate('joinRequests', 'name');
@@ -73,9 +67,7 @@ export const getFamily = async (familyId) => {
   };
 };
 
-/**
- * Mettre à jour une famille
- */
+// Mettre à jour une famille
 export const updateFamily = async (familyId, updateData) => {
   const updatedFamily = await Family.findByIdAndUpdate(
     familyId,

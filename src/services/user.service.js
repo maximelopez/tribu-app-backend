@@ -15,11 +15,11 @@ const generateToken = (user) => {
 
 // Fonction de login
 export const loginUser = async (email, password) => {
-  const user = await User.findOne({ email });
-  if (!user) throw new Error('Utilisateur non trouvé');
+  const user = await User.findOne({ email }).select('+password');
+  if (!user) throw new Error('Email ou mot de passe incorrect');
 
   const isMatch = await bcrypt.compare(password, user.password);
-  if (!isMatch) throw new Error('Mot de passe incorrect');
+  if (!isMatch) throw new Error('Email ou mot de passe incorrect');
 
   const token = generateToken(user);
 
@@ -36,22 +36,37 @@ export const loginUser = async (email, password) => {
   };
 };
 
-// Création de l'utilisateur + connexion automatique
+// Création de l'utilisateur
 export const createUser = async (data) => {
-    const existingUser = await User.findOne({ email: data.email });
-    if (existingUser) throw new Error('Cet email est déjà utilisé');
+  const existingUser = await User.findOne({ email: data.email });
+  if (existingUser) throw new Error('Cet email est déjà utilisé');
 
-    const hashedPassword = await bcrypt.hash(data.password, 10);
+  const hashedPassword = await bcrypt.hash(data.password, 10);
 
-    const user = new User({ ...data, password: hashedPassword });
+  const user = await User.create({
+    ...data,
+    password: hashedPassword
+  });
 
-    await user.save();
+  const token = generateToken(user);
 
-    return await loginUser(data.email, data.password);
+  return {
+    user: {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      score: user.score,
+      familyId: user.familyId,
+      avatarUrl: user.avatarUrl,
+    },
+    token
+  };
 };
 
 export const getProfile = async (userId) => {
   const user = await User.findById(userId);
+  if (!user) throw new Error('Utilisateur non trouvé');
+
   return { 
     profile: {
       id: user._id, 
@@ -66,14 +81,22 @@ export const getProfile = async (userId) => {
 
 // Mettre à jour le profil
 export const updateProfile = async (userId, updateData) => {
-  // Si le mot de passe est mis à jour, le hasher
-  if (updateData.password) {
-    updateData.password = await bcrypt.hash(updateData.password, 10);
+  const allowedFields = ['name', 'email', 'password', 'avatarUrl'];
+  const filteredData = {};
+
+  for (let key of allowedFields) {
+    if (updateData[key] !== undefined) {
+      filteredData[key] = updateData[key];
+    }
+  }
+
+  if (filteredData.password) {
+    filteredData.password = await bcrypt.hash(filteredData.password, 10);
   }
 
   const updatedUser = await User.findByIdAndUpdate(
     userId,
-    { $set: updateData },
+    { $set: filteredData },
     { new: true, runValidators: true }
   );
 

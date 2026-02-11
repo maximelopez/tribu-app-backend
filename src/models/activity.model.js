@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const activitySchema = mongoose.Schema({
+const activitySchema = new mongoose.Schema({
     name: {
         type: String,
         required: [true, 'Le nom est obligatoire']

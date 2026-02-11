@@ -2,9 +2,7 @@ import * as familyService from '../services/family.service.js';
 import { io } from '../server.js';
 import { User } from '../models/user.model.js';
 
-/**
- * Créer une famille
- */
+// Créer une famille
 export const createFamily = async (req, res) => {
   try {
     const { creatorId } = req.body;
@@ -18,15 +16,13 @@ export const createFamily = async (req, res) => {
     res.status(201).json(family);
   } catch (error) {
     res.status(400).json({
-      message: 'Impossible de créer la famille.',
+      message: 'Impossible de créer la famille',
       error: error.message,
     });
   }
 };
 
-/**
- * Rechercher des familles
- */
+// Rechercher des familles
 export const searchFamilies = async (req, res) => {
   try {
     const { search } = req.query;
@@ -45,9 +41,7 @@ export const searchFamilies = async (req, res) => {
   }
 };
 
-/**
- * Récupérer une famille
- */
+// Récupérer une famille
 export const getFamily = async (req, res) => {
   try {
     const familyId = req.params.id;
@@ -56,15 +50,13 @@ export const getFamily = async (req, res) => {
     res.status(200).json(family);
   } catch (error) {
     res.status(400).json({
-      message: 'Impossible de récupérer la famille.',
+      message: 'Impossible de récupérer la famille',
       error: error.message,
     });
   }
 };
 
-/**
- * Mettre à jour une famille
- */
+// Mettre à jour une famille
 export const updateFamily = async (req, res) => {
   try {
     const familyId = req.params.id;
@@ -72,7 +64,7 @@ export const updateFamily = async (req, res) => {
 
     const updatedFamily = await familyService.updateFamily(familyId, updateData);
 
-    // 🔔 Notifier tous les membres connectés de la famille
+    // Notifier tous les membres connectés de la famille
     io.to(`family:${familyId}`).emit('familyUpdated', {
       id: updatedFamily._id,
       name: updatedFamily.name,
@@ -92,15 +84,13 @@ export const updateFamily = async (req, res) => {
     });
   } catch (error) {
     res.status(400).json({
-      message: 'Impossible de mettre à jour la famille.',
+      message: 'Impossible de mettre à jour la famille',
       error: error.message,
     });
   }
 };
 
-/**
- * Envoyer une demande pour rejoindre une famille
- */
+// Envoyer une demande pour rejoindre une famille
 export const sendJoinRequest = async (req, res) => {
   try {
     const { familyId, userId } = req.body;
@@ -111,7 +101,7 @@ export const sendJoinRequest = async (req, res) => {
 
     const family = await familyService.requestToJoinFamily(familyId, userId);
 
-    // 🔔 Notifier le créateur de la famille
+    // Notifier le créateur de la famille
     io.to(`user:${family.creatorId}`).emit('newJoinRequest', {
       familyId,
       userId,
@@ -126,9 +116,7 @@ export const sendJoinRequest = async (req, res) => {
   }
 };
 
-/**
- * Accepter ou refuser une demande
- */
+// Accepter ou refuser une demande
 export const respondJoinRequest = async (req, res) => {
   try {
     const { familyId, userId, accept } = req.body;
@@ -144,20 +132,20 @@ export const respondJoinRequest = async (req, res) => {
     );
 
     if (accept) {
-      // ➕ Associer l'utilisateur à la famille
+      // Associer l'utilisateur à la famille
       await User.findByIdAndUpdate(userId, { familyId });
 
-      // 🔔 Notifier l'utilisateur
+      // Notifier l'utilisateur
       io.to(`user:${userId}`).emit('familyAccepted', {
         familyId,
       });
 
-      // 🔔 Notifier les membres de la famille
+      // Notifier les membres de la famille
       io.to(`family:${familyId}`).emit('memberJoined', {
         userId,
       });
     } else {
-      // 🔔 Notifier l'utilisateur du refus
+      // Notifier l'utilisateur du refus
       io.to(`user:${userId}`).emit('familyRejected', {
         familyId,
       });
@@ -172,9 +160,7 @@ export const respondJoinRequest = async (req, res) => {
   }
 };
 
-/**
- * Supprimer une famille
- */
+// Supprimer une famille
 export const deleteFamily = async (req, res) => {
   try {
     const familyId = req.params.id;
@@ -182,11 +168,11 @@ export const deleteFamily = async (req, res) => {
     await familyService.deleteFamily(familyId);
 
     res.status(200).json({
-      message: 'Famille supprimée avec succès.',
+      message: 'Famille supprimée avec succès',
     });
   } catch (error) {
     res.status(400).json({
-      message: 'Impossible de supprimer la famille.',
+      message: 'Impossible de supprimer la famille',
       error: error.message,
     });
   }

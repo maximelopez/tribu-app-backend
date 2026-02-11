@@ -84,27 +84,32 @@ export const updateFamily = async (familyId, updateData) => {
 
 // Envoyer une demande pour rejoindre une famille
 export const requestToJoinFamily = async (familyId, userId) => {
+  // familyId déjà depuis params
   const family = await Family.findById(familyId);
   if (!family) throw new Error("Famille non trouvée");
 
-  // ❌ Déjà demandé
-  const alreadyRequested = family.joinRequests.some(id => id.toString() === userId);
-  if (alreadyRequested) throw new Error("Vous avez déjà envoyé une demande à cette famille");
+  // Vérification si déjà demandé
+  if (family.joinRequests.some(id => id.toString() === userId)) {
+    throw new Error("Vous avez déjà envoyé une demande à cette famille");
+  }
 
   family.joinRequests.push(userId);
   await family.save();
 
-  // Retourne la famille avec joinRequests peuplé
   const populatedFamily = await Family.findById(familyId).populate('joinRequests', 'name');
-
   const joinRequestsWithNames = populatedFamily.joinRequests.map(user => ({
     id: user._id,
     name: user.name
   }));
 
   return {
-    ...populatedFamily.toObject(),
-    joinRequests: joinRequestsWithNames
+    id: populatedFamily._id,
+    name: populatedFamily.name,
+    city: populatedFamily.city,
+    slogan: populatedFamily.slogan,
+    themes: populatedFamily.themes,
+    creatorId: populatedFamily.creatorId,
+    joinRequests: joinRequestsWithNames,
   };
 };
 
@@ -113,23 +118,20 @@ export const handleJoinRequest = async (familyId, userId, accept) => {
   const family = await Family.findById(familyId);
   if (!family) throw new Error("Famille non trouvée");
 
-  const requestExists = family.joinRequests.some(id => id.toString() === userId);
-  if (!requestExists) throw new Error("Aucune demande trouvée pour cet utilisateur");
+  if (!family.joinRequests.some(id => id.toString() === userId)) {
+    throw new Error("Aucune demande trouvée pour cet utilisateur");
+  }
 
-  // Retirer la demande
+  // Supprime la demande
   family.joinRequests = family.joinRequests.filter(id => id.toString() !== userId);
-
   await family.save();
 
-  // Peupler joinRequests pour renvoyer {id, name}
   const populatedFamily = await Family.findById(familyId).populate('joinRequests', 'name');
-
   const joinRequestsWithNames = populatedFamily.joinRequests.map(user => ({
     id: user._id,
     name: user.name
   }));
 
-  // Retourner la famille avec joinRequests prêt pour le front
   return {
     id: populatedFamily._id,
     name: populatedFamily.name,

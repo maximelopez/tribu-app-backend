@@ -93,24 +93,19 @@ export const updateFamily = async (req, res) => {
 // Envoyer une demande pour rejoindre une famille
 export const sendJoinRequest = async (req, res) => {
   try {
-    const { familyId, userId } = req.body;
+    const familyId = req.params.id;
+    const { userId } = req.body;
 
-    if (!familyId || !userId) {
-      return res.status(400).json({ message: 'familyId ou userId manquant' });
+    if (!userId) {
+      return res.status(400).json({ message: 'userId manquant' });
     }
 
     const family = await familyService.requestToJoinFamily(familyId, userId);
 
-    // Notifier le créateur de la famille
-    io.to(`user:${family.creatorId}`).emit('newJoinRequest', {
-      familyId,
-      userId,
-    });
+    // Notifier le créateur
+    io.to(`user:${family.creatorId}`).emit('newJoinRequest', { familyId, userId });
 
-    res.status(200).json({
-      message: 'Demande envoyée',
-      family,
-    });
+    res.status(200).json({ message: 'Demande envoyée', family });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -119,42 +114,31 @@ export const sendJoinRequest = async (req, res) => {
 // Accepter ou refuser une demande
 export const respondJoinRequest = async (req, res) => {
   try {
-    const { familyId, userId, accept } = req.body;
+    const familyId = req.params.id;
+    const userId = req.params.userId;
+    const { accept } = req.body;
 
     if (typeof accept !== 'boolean') {
       return res.status(400).json({ message: 'accept doit être un booléen' });
     }
 
-    const family = await familyService.handleJoinRequest(
-      familyId,
-      userId,
-      accept
-    );
+    const family = await familyService.handleJoinRequest(familyId, userId, accept);
 
     if (accept) {
       // Associer l'utilisateur à la famille
       await User.findByIdAndUpdate(userId, { familyId });
 
       // Notifier l'utilisateur
-      io.to(`user:${userId}`).emit('familyAccepted', {
-        familyId,
-      });
+      io.to(`user:${userId}`).emit('familyAccepted', { familyId });
 
       // Notifier les membres de la famille
-      io.to(`family:${familyId}`).emit('memberJoined', {
-        userId,
-      });
+      io.to(`family:${familyId}`).emit('memberJoined', { userId });
     } else {
       // Notifier l'utilisateur du refus
-      io.to(`user:${userId}`).emit('familyRejected', {
-        familyId,
-      });
+      io.to(`user:${userId}`).emit('familyRejected', { familyId });
     }
 
-    res.status(200).json({
-      message: 'Demande traitée',
-      family,
-    });
+    res.status(200).json({ message: 'Demande traitée', family });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }

@@ -9,13 +9,20 @@ const activitySchema = new mongoose.Schema({
         type: String,
         required: [true, 'La description est obligatoire']
     },
-     members: [
+    city: {
+        type: String,
+        required: [true, 'La ville est obligatoire']
+    },
+    members: [
         {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'User',
-            required: false
+            ref: 'User'
         }
-    ]
+    ],
+    isSponsored: {
+        type: Boolean,
+        default: false
+    }
 }, { timestamps: true });
 
 export const Activity = mongoose.model('Activity', activitySchema);

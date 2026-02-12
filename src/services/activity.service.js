@@ -6,7 +6,14 @@ export const createActivity = async (data) => {
 };
 
 export const getActivity = async (activityId) => {
-    return await Activity.findById(activityId);
+  return await Activity.findById(activityId).populate('members');
+};
+
+export const getAllActivities = async ({ city } = {}) => {
+  const query = {};
+  if (city) query.city = city;
+
+  return await Activity.find(query).populate('members');
 };
 
 export const updateActivity = async (activityId, updateData) => {
@@ -16,7 +23,7 @@ export const updateActivity = async (activityId, updateData) => {
         { new: true, runValidators: true }
     );
 
-    if (!updatedActivity) throw new Error('Activité non trouvé.');
+    if (!updatedActivity) throw new Error('Activité non trouvée');
   
     return updatedActivity;
 };

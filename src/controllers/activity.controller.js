@@ -12,12 +12,28 @@ export const createActivity = async (req, res) => {
 export const getActivity = async (req, res) => {
     try {
         const activityId = req.params.id;
-
         const activity = await activityService.getActivity(activityId);
+
+        if (!activity) {
+            return res.status(404).json({ message: "Activité non trouvée" });
+        }
+
         res.status(200).json(activity);
     } catch (error) {
         res.status(400).json({ message: 'Impossible de récupérer l\'activité', error: error.message });
     }
+};
+
+export const getAllActivities = async (req, res) => {
+  try {
+    const { city } = req.query;
+
+    const activities = await activityService.getAllActivities({ city });
+
+    res.status(200).json(activities);
+  } catch (error) {
+    res.status(400).json({ message: "Impossible de récupérer les activités", error: error.message });
+  }
 };
 
 export const updateActivity = async (req, res) => {

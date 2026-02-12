@@ -30,11 +30,13 @@ io.on('connection', (socket) => {
   });
 
   // Envoyer un message dans la famille
-  socket.on('sendMessage', async ({ familyId, senderId, content }) => {
+  socket.on('sendMessage', async ({ familyId, sender, content }) => {
     try {
-      const message = await chatService.createMessage(familyId, senderId, content);
+      const message = await chatService.createMessage(familyId, sender, content);
 
-      io.to(`family:${familyId}`).emit('newMessage', message);
+      const populatedMessage = await message.populate('sender', 'name');
+
+      io.to(`family:${familyId}`).emit('newMessage', populatedMessage);
     } catch (error) {
       console.error('Erreur sendMessage:', error);
       socket.emit('errorMessage', { message: error.message });

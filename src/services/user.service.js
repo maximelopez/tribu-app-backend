@@ -12,14 +12,15 @@ export const getProfile = async (userId) => {
       email: user.email,
       score: user.score,
       familyId: user.familyId,
-      avatarUrl: user.avatarUrl,
+      avatar: user.avatar,
+      theme: user.theme,
     }
   };
 }
 
 // Mettre à jour le profil
 export const updateProfile = async (userId, updateData) => {
-  const allowedFields = ['name', 'email', 'password', 'avatarUrl'];
+  const allowedFields = ['name', 'email', 'password', 'avatar'];
   const filteredData = {};
 
   for (let key of allowedFields) {
@@ -46,7 +47,8 @@ export const updateProfile = async (userId, updateData) => {
     email: updatedUser.email,
     score: updatedUser.score,
     familyId: updatedUser.familyId,
-    avatarUrl: updatedUser.avatarUrl,
+    avatar: updatedUser.avatar,
+    theme: updatedUser.theme,
   };
 };
 
@@ -68,7 +70,8 @@ export const updateScore = async (userId, score) => {
     email: updatedUser.email,
     score: updatedUser.score,
     familyId: updatedUser.familyId,
-    avatarUrl: updatedUser.avatarUrl,
+    avatar: updatedUser.avatar,
+    theme: updatedUser.theme,
   };
 };
 
@@ -99,19 +102,20 @@ export const addUserToFamily = async (userId, familyId) => {
     email: updatedUser.email,
     score: updatedUser.score,
     familyId: updatedUser.familyId,
-    avatarUrl: updatedUser.avatarUrl,
+    avatar: updatedUser.avatar,
+    theme: updatedUser.theme,
   };
 };
 
 // Récupérer tous les utilisateurs d'une famille
 export const getUsersByFamily = async (familyId) => {
-  const users = await User.find({ familyId }).select('name score _id avatarUrl');
+  const users = await User.find({ familyId }).select('name score _id avatar');
   // tu peux ajouter d'autres champs que tu veux exposer côté front
 
   return users.map(user => ({
     id: user._id,
     name: user.name,
     score: user.score,
-    avatarUrl: user.avatarUrl,
+    avatar: user.avatar,
   }));
 };

@@ -30,7 +30,8 @@ export const loginUser = async (email, password) => {
             email: user.email,
             score: user.score,
             familyId: user.familyId,
-            avatarUrl: user.avatarUrl,
+            avatar: user.avatar,
+            theme: user.theme,
         },
         token
     };
@@ -57,7 +58,8 @@ export const createUser = async (data) => {
             email: user.email,
             score: user.score,
             familyId: user.familyId,
-            avatarUrl: user.avatarUrl,
+            avatar: user.avatar,
+            theme: user.theme,
         },
         token
     };

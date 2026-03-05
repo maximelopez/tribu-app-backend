@@ -36,8 +36,8 @@ const userSchema = new mongoose.Schema({
     },
     theme: {
         type: String,
-        enum: ['bleu', 'jaune', 'orange', 'vert'],
-        default: 'bleu'
+        enum: ['vert', 'jaune', 'orange'],
+        default: 'vert'
     }
 }, { timestamps: true });
 

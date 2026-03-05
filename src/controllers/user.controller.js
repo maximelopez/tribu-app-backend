@@ -43,6 +43,27 @@ export const updateScore = async (req, res) => {
   }
 };
 
+// Changer le thème
+export const updateTheme = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const { theme } = req.body;
+
+    if (!theme) {
+      return res.status(400).json({ message: 'theme requis' });
+    }
+
+    const updatedUser = await userService.updateTheme(userId, theme);
+
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    res.status(400).json({
+      message: 'Impossible de mettre à jour le thème',
+      error: error.message
+    });
+  }
+};
+
 // Supprimer le profil
 export const deleteProfile = async (req, res) => {
     try {

@@ -75,6 +75,29 @@ export const updateScore = async (userId, score) => {
   };
 };
 
+// Mettre à jour le thème
+export const updateTheme = async (userId, theme) => {
+  const updatedUser = await User.findByIdAndUpdate(
+    userId,
+    { theme },
+    { new: true, runValidators: true }
+  );
+
+  if (!updatedUser) {
+    throw new Error('Utilisateur non trouvé');
+  }
+
+  return {
+    id: updatedUser._id,
+    name: updatedUser.name,
+    email: updatedUser.email,
+    score: updatedUser.score,
+    familyId: updatedUser.familyId,
+    avatar: updatedUser.avatar,
+    theme: updatedUser.theme,
+  };
+};
+
 // Supprimer le profil
 export const deleteProfile = async (userId) => {
   const deletedUser = await User.findByIdAndDelete(userId);

@@ -3,7 +3,8 @@ import {
     getProfile, 
     updateProfile, 
     deleteProfile, 
-    updateScore, 
+    updateScore,
+    updateTheme,
     addUserToFamily,
     getUsersByFamily
 } from '../controllers/user.controller.js';
@@ -14,8 +15,8 @@ router.get('/:id', getProfile);
 router.patch('/:id', updateProfile);
 router.delete('/:id', deleteProfile);
 router.patch('/:id/score', updateScore);
+router.patch('/:id/theme', updateTheme);
 router.patch('/:id/family', addUserToFamily);
-
 router.get('/', getUsersByFamily);
 
 export default router;

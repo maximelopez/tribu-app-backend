@@ -19,9 +19,8 @@ const activitySchema = new mongoose.Schema({
             ref: 'User'
         }
     ],
-    isSponsored: {
-        type: Boolean,
-        default: false
+    url : {
+        type: String,
     }
 }, { timestamps: true });
 

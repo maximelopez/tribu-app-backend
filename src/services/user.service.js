@@ -14,6 +14,7 @@ export const getProfile = async (userId) => {
       familyId: user.familyId,
       avatar: user.avatar,
       theme: user.theme,
+      birthdate: user.birthdate,
     }
   };
 }
@@ -49,6 +50,7 @@ export const updateProfile = async (userId, updateData) => {
     familyId: updatedUser.familyId,
     avatar: updatedUser.avatar,
     theme: updatedUser.theme,
+    birthdate: updatedUser.birthdate,
   };
 };
 
@@ -72,6 +74,7 @@ export const updateScore = async (userId, score) => {
     familyId: updatedUser.familyId,
     avatar: updatedUser.avatar,
     theme: updatedUser.theme,
+    birthdate: updatedUser.birthdate,
   };
 };
 
@@ -95,6 +98,31 @@ export const updateTheme = async (userId, theme) => {
     familyId: updatedUser.familyId,
     avatar: updatedUser.avatar,
     theme: updatedUser.theme,
+    birthdate: updatedUser.birthdate,
+  };
+};
+
+// Mettre à jour la date de naissance
+export const updateBirthdate = async (userId, birthdate) => {
+  const updatedUser = await User.findByIdAndUpdate(
+    userId,
+    { birthdate },
+    { new: true, runValidators: true }
+  );
+
+  if (!updatedUser) {
+    throw new Error('Utilisateur non trouvé');
+  }
+
+  return {
+    id: updatedUser._id,
+    name: updatedUser.name,
+    email: updatedUser.email,
+    score: updatedUser.score,
+    familyId: updatedUser.familyId,
+    avatar: updatedUser.avatar,
+    theme: updatedUser.theme,
+    birthdate: updatedUser.birthdate,
   };
 };
 
@@ -127,12 +155,13 @@ export const addUserToFamily = async (userId, familyId) => {
     familyId: updatedUser.familyId,
     avatar: updatedUser.avatar,
     theme: updatedUser.theme,
+    birthdate: updatedUser.birthdate,
   };
 };
 
 // Récupérer tous les utilisateurs d'une famille
 export const getUsersByFamily = async (familyId) => {
-  const users = await User.find({ familyId }).select('name score _id avatar');
+  const users = await User.find({ familyId }).select('_id name score avatar birthdate');
   // tu peux ajouter d'autres champs que tu veux exposer côté front
 
   return users.map(user => ({
@@ -140,5 +169,6 @@ export const getUsersByFamily = async (familyId) => {
     name: user.name,
     score: user.score,
     avatar: user.avatar,
+    birthdate: user.birthdate,
   }));
 };

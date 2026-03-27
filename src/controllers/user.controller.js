@@ -64,6 +64,33 @@ export const updateTheme = async (req, res) => {
   }
 };
 
+// Mettre à jour la date de naissance
+export const updateBirthdate = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const { birthdate } = req.body;
+
+    if (!birthdate) {
+      return res.status(400).json({ message: 'date de naissance requise' });
+    }
+
+    const date = new Date(birthdate);
+
+    if (isNaN(date.getTime())) {
+      return res.status(400).json({ message: 'Date invalide' });
+    }
+
+    const updatedUser = await userService.updateBirthdate(userId, date);
+    
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    res.status(400).json({
+      message: 'Impossible de mettre à jour la date de naissance',
+      error: error.message
+    });
+  }
+};
+
 // Supprimer le profil
 export const deleteProfile = async (req, res) => {
     try {

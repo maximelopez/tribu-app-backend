@@ -5,6 +5,7 @@ import {
     deleteProfile, 
     updateScore,
     updateTheme,
+    updateBirthdate,
     addUserToFamily,
     getUsersByFamily
 } from '../controllers/user.controller.js';
@@ -16,6 +17,7 @@ router.patch('/:id', updateProfile);
 router.delete('/:id', deleteProfile);
 router.patch('/:id/score', updateScore);
 router.patch('/:id/theme', updateTheme);
+router.patch('/:id/birthdate', updateBirthdate);
 router.patch('/:id/family', addUserToFamily);
 router.get('/', getUsersByFamily);
 

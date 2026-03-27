@@ -38,6 +38,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         enum: ['vert', 'jaune', 'orange'],
         default: 'vert'
+    },
+    birthdate: {
+        type: Date,
+        default: null
     }
 }, { timestamps: true });
 

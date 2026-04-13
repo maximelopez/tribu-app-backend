@@ -31,7 +31,7 @@ const userSchema = new mongoose.Schema({
         default: null
     },
     avatar: {
-        type: String,
+        type: Number,
         default: null
     },
     theme: {

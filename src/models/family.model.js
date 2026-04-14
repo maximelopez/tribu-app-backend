@@ -13,7 +13,7 @@ const familySchema = new mongoose.Schema({
         type: String,
         default: null,
     },
-    themes: {
+    topics: {
         type: [String],
         default: []
     },

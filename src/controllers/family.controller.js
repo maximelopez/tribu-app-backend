@@ -70,7 +70,7 @@ export const updateFamily = async (req, res) => {
       name: updatedFamily.name,
       city: updatedFamily.city,
       slogan: updatedFamily.slogan,
-      themes: updatedFamily.themes,
+      topics: updatedFamily.topics,
     });
 
     res.status(200).json({
@@ -79,7 +79,7 @@ export const updateFamily = async (req, res) => {
         name: updatedFamily.name,
         city: updatedFamily.city,
         slogan: updatedFamily.slogan,
-        themes: updatedFamily.themes,
+        topics: updatedFamily.topics,
       },
     });
   } catch (error) {

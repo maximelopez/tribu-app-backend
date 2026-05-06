@@ -4,6 +4,7 @@ import authRoutes from './routes/auth.routes.js';
 import userRoutes from './routes/user.routes.js';
 import familyRoutes from './routes/family.routes.js';
 import activityRoutes from './routes/activity.routes.js';
+import placeRoutes from './routes/place.routes.js';
 import { connectDB } from './config/db.js';
 import dotenv from 'dotenv';
 
@@ -18,6 +19,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/families', familyRoutes);
 app.use('/api/activities', activityRoutes);
+app.use('/api/places', placeRoutes);
 
 app.get('/', (req, res) => res.send('Express app!'));
 

@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import { getPlacesByCity } from '../services/place.service.js';
+import { getPlaces } from '../controllers/place.controller.js';
 
 const router = Router();
 
-router.get('/', getPlacesByCity);
+router.get('/', getPlaces);
 
 export default router;

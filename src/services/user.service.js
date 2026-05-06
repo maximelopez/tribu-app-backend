@@ -1,23 +1,22 @@
 import { User } from '../models/user.model.js';
 import bcrypt from 'bcrypt';
 
+const formatUser = (user) => ({
+  id: user._id,
+  name: user.name,
+  email: user.email,
+  score: user.score,
+  familyId: user.familyId,
+  avatar: user.avatar,
+  theme: user.theme,
+  birthdate: user.birthdate,
+});
+
 export const getProfile = async (userId) => {
   const user = await User.findById(userId);
   if (!user) throw new Error('Utilisateur non trouvé');
-
-  return {
-    profile: {
-      id: user._id,
-      name: user.name,
-      email: user.email,
-      score: user.score,
-      familyId: user.familyId,
-      avatar: user.avatar,
-      theme: user.theme,
-      birthdate: user.birthdate,
-    }
-  };
-}
+  return formatUser(user);
+};
 
 // Mettre à jour le profil
 export const updateProfile = async (userId, updateData) => {
@@ -41,17 +40,7 @@ export const updateProfile = async (userId, updateData) => {
   );
 
   if (!updatedUser) throw new Error('Utilisateur non trouvé');
-
-  return {
-    id: updatedUser._id,
-    name: updatedUser.name,
-    email: updatedUser.email,
-    score: updatedUser.score,
-    familyId: updatedUser.familyId,
-    avatar: updatedUser.avatar,
-    theme: updatedUser.theme,
-    birthdate: updatedUser.birthdate,
-  };
+  return formatUser(updatedUser);
 };
 
 // Mettre à jour uniquement le score
@@ -62,20 +51,8 @@ export const updateScore = async (userId, score) => {
     { new: true, runValidators: true }
   );
 
-  if (!updatedUser) {
-    throw new Error('Utilisateur non trouvé');
-  }
-
-  return {
-    id: updatedUser._id,
-    name: updatedUser.name,
-    email: updatedUser.email,
-    score: updatedUser.score,
-    familyId: updatedUser.familyId,
-    avatar: updatedUser.avatar,
-    theme: updatedUser.theme,
-    birthdate: updatedUser.birthdate,
-  };
+  if (!updatedUser) throw new Error('Utilisateur non trouvé');
+  return formatUser(updatedUser);
 };
 
 // Mettre à jour le thème
@@ -86,20 +63,8 @@ export const updateTheme = async (userId, theme) => {
     { new: true, runValidators: true }
   );
 
-  if (!updatedUser) {
-    throw new Error('Utilisateur non trouvé');
-  }
-
-  return {
-    id: updatedUser._id,
-    name: updatedUser.name,
-    email: updatedUser.email,
-    score: updatedUser.score,
-    familyId: updatedUser.familyId,
-    avatar: updatedUser.avatar,
-    theme: updatedUser.theme,
-    birthdate: updatedUser.birthdate,
-  };
+  if (!updatedUser) throw new Error('Utilisateur non trouvé');
+  return formatUser(updatedUser);
 };
 
 // Mettre à jour la date de naissance
@@ -110,28 +75,14 @@ export const updateBirthdate = async (userId, birthdate) => {
     { new: true, runValidators: true }
   );
 
-  if (!updatedUser) {
-    throw new Error('Utilisateur non trouvé');
-  }
-
-  return {
-    id: updatedUser._id,
-    name: updatedUser.name,
-    email: updatedUser.email,
-    score: updatedUser.score,
-    familyId: updatedUser.familyId,
-    avatar: updatedUser.avatar,
-    theme: updatedUser.theme,
-    birthdate: updatedUser.birthdate,
-  };
+  if (!updatedUser) throw new Error('Utilisateur non trouvé');
+  return formatUser(updatedUser);
 };
 
 // Supprimer le profil
 export const deleteProfile = async (userId) => {
   const deletedUser = await User.findByIdAndDelete(userId);
-  if (!deletedUser) {
-    throw new Error('Utilisateur non trouvé');
-  }
+  if (!deletedUser) throw new Error('Utilisateur non trouvé');
   return;
 };
 
@@ -143,32 +94,12 @@ export const addUserToFamily = async (userId, familyId) => {
     { new: true, runValidators: true }
   );
 
-  if (!updatedUser) {
-    throw new Error('Utilisateur non trouvé');
-  }
-
-  return {
-    id: updatedUser._id,
-    name: updatedUser.name,
-    email: updatedUser.email,
-    score: updatedUser.score,
-    familyId: updatedUser.familyId,
-    avatar: updatedUser.avatar,
-    theme: updatedUser.theme,
-    birthdate: updatedUser.birthdate,
-  };
+  if (!updatedUser) throw new Error('Utilisateur non trouvé');
+  return formatUser(updatedUser);
 };
 
 // Récupérer tous les utilisateurs d'une famille
 export const getUsersByFamily = async (familyId) => {
-  const users = await User.find({ familyId }).select('_id name score avatar birthdate');
-  // tu peux ajouter d'autres champs que tu veux exposer côté front
-
-  return users.map(user => ({
-    id: user._id,
-    name: user.name,
-    score: user.score,
-    avatar: user.avatar,
-    birthdate: user.birthdate,
-  }));
+  const users = await User.find({ familyId });
+  return users.map(formatUser);
 };

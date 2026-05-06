@@ -1,12 +1,10 @@
-import { getPlacesByCity } from '../services/place.service.js';
+import * as placeService from '../services/place.service.js';
 
 export const getPlaces = async (req, res) => {
-    const { city } = req.query;
-
-    if (!city) return res.status(400).json({ message: 'Le paramètre ville est requis.' });
+    const { city, category } = req.query;
 
     try {
-        const places = await getPlacesByCity(city);
+        const places = await placeService.getPlaces({ city, category });
         res.json(places);
     } catch (error) {
         res.status(500).json({ message: 'Erreur serveur.' });

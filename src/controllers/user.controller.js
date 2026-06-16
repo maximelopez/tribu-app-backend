@@ -64,6 +64,23 @@ export const updateTheme = async (req, res) => {
   }
 };
 
+// Mettre à jour l'avatar
+export const updateAvatar = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const { avatar } = req.body;
+
+    if (!avatar) {
+      return res.status(400).json({ message: 'avatar requis' });
+    }
+
+    const updatedUser = await userService.updateAvatar(userId, avatar);
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    res.status(400).json({ message: 'Impossible de mettre à jour l\'avatar', error: error.message });
+  }
+};
+
 // Mettre à jour la date de naissance
 export const updateBirthdate = async (req, res) => {
   try {

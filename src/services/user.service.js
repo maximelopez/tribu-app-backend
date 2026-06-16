@@ -67,6 +67,18 @@ export const updateTheme = async (userId, theme) => {
   return formatUser(updatedUser);
 };
 
+// Mettre à jour l'avatar
+export const updateAvatar = async (userId, avatar) => {
+  const updatedUser = await User.findByIdAndUpdate(
+    userId,
+    { avatar },
+    { new: true, runValidators: true }
+  );
+
+  if (!updatedUser) throw new Error('Utilisateur non trouvé');
+  return formatUser(updatedUser);
+};
+
 // Mettre à jour la date de naissance
 export const updateBirthdate = async (userId, birthdate) => {
   const updatedUser = await User.findByIdAndUpdate(

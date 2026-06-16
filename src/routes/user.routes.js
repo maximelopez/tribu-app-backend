@@ -5,6 +5,7 @@ import {
     deleteProfile, 
     updateScore,
     updateTheme,
+    updateAvatar,
     updateBirthdate,
     addUserToFamily,
     getUsersByFamily
@@ -17,6 +18,7 @@ router.patch('/:id', updateProfile);
 router.delete('/:id', deleteProfile);
 router.patch('/:id/score', updateScore);
 router.patch('/:id/theme', updateTheme);
+router.patch('/:id/avatar', updateAvatar);
 router.patch('/:id/birthdate', updateBirthdate);
 router.patch('/:id/family', addUserToFamily);
 router.get('/', getUsersByFamily);

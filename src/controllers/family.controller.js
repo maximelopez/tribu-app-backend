@@ -151,6 +151,9 @@ export const deleteFamily = async (req, res) => {
 
     await familyService.deleteFamily(familyId);
 
+    // Détacher les membres de la famille supprimée
+    await User.updateMany({ familyId }, { $set: { familyId: null } });
+
     res.status(200).json({
       message: 'Famille supprimée avec succès',
     });

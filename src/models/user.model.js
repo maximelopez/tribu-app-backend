@@ -19,11 +19,10 @@ const userSchema = new mongoose.Schema({
         minlength: [6, 'Le mot de passe doit contenir au moins 6 caractères'],
         select: false
     },
-    score: {
+    points: {
         type: Number,
-        default: null,
-        min: 0,
-        max: 100,
+        default: 0,
+        min: 0
     },
     familyId: { 
         type: mongoose.Schema.Types.ObjectId, 

@@ -25,21 +25,21 @@ export const updateProfile = async (req, res) => {
     }
 };
 
-// Mettre à jour le score
-export const updateScore = async (req, res) => {
+// Ajouter des points à l'utilisateur
+export const addPoints = async (req, res) => {
   try {
     const userId = req.params.id;
-    const { score } = req.body;
+    const { points } = req.body;
 
-    // Vérification simple
-    if (typeof score !== 'number') {
-      return res.status(400).json({ message: 'Le score doit être un nombre' });
+    // Vérification : entier strictement positif
+    if (!Number.isInteger(points) || points <= 0) {
+      return res.status(400).json({ message: 'Les points doivent être un entier positif' });
     }
 
-    const updatedUser = await userService.updateScore(userId, score);
+    const updatedUser = await userService.addPoints(userId, points);
     res.status(200).json(updatedUser);
   } catch (error) {
-    res.status(400).json({ message: 'Impossible de mettre à jour le score', error: error.message });
+    res.status(400).json({ message: 'Impossible d\'ajouter les points', error: error.message });
   }
 };
 

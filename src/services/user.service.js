@@ -1,11 +1,12 @@
 import { User } from '../models/user.model.js';
+import { Family } from '../models/family.model.js';
 import bcrypt from 'bcrypt';
 
 const formatUser = (user) => ({
   id: user._id,
   name: user.name,
   email: user.email,
-  score: user.score,
+  points: user.points,
   familyId: user.familyId,
   avatar: user.avatar,
   theme: user.theme,
@@ -43,15 +44,23 @@ export const updateProfile = async (userId, updateData) => {
   return formatUser(updatedUser);
 };
 
-// Mettre à jour uniquement le score
-export const updateScore = async (userId, score) => {
+// Ajouter des points à l'utilisateur et à sa famille
+export const addPoints = async (userId, points) => {
   const updatedUser = await User.findByIdAndUpdate(
     userId,
-    { score },
+    { $inc: { points } },
     { new: true, runValidators: true }
   );
 
   if (!updatedUser) throw new Error('Utilisateur non trouvé');
+
+  if (updatedUser.familyId) {
+    await Family.updateOne(
+      { _id: updatedUser.familyId },
+      { $inc: { points } }
+    );
+  }
+
   return formatUser(updatedUser);
 };
 

@@ -3,7 +3,7 @@ import {
     getProfile, 
     updateProfile, 
     deleteProfile, 
-    updateScore,
+    addPoints,
     updateTheme,
     updateAvatar,
     updateBirthdate,
@@ -16,7 +16,7 @@ const router = Router();
 router.get('/:id', getProfile);
 router.patch('/:id', updateProfile);
 router.delete('/:id', deleteProfile);
-router.patch('/:id/score', updateScore);
+router.patch('/:id/points', addPoints);
 router.patch('/:id/theme', updateTheme);
 router.patch('/:id/avatar', updateAvatar);
 router.patch('/:id/birthdate', updateBirthdate);

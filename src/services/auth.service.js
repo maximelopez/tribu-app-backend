@@ -28,10 +28,11 @@ export const loginUser = async (email, password) => {
             id: user._id,
             name: user.name,
             email: user.email,
-            score: user.score,
+            points: user.points,
             familyId: user.familyId,
             avatar: user.avatar,
             theme: user.theme,
+            birthdate: user.birthdate,
         },
         token
     };
@@ -45,8 +46,9 @@ export const createUser = async (data) => {
     const hashedPassword = await bcrypt.hash(data.password, 10);
 
     const user = await User.create({
-        ...data,
-        password: hashedPassword
+        name: data.name,
+        email: data.email,
+        password: hashedPassword,
     });
 
     const token = generateToken(user);
@@ -56,10 +58,11 @@ export const createUser = async (data) => {
             id: user._id,
             name: user.name,
             email: user.email,
-            score: user.score,
+            points: user.points,
             familyId: user.familyId,
             avatar: user.avatar,
             theme: user.theme,
+            birthdate: user.birthdate,
         },
         token
     };

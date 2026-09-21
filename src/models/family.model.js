@@ -17,6 +17,11 @@ const familySchema = new mongoose.Schema({
         type: [String],
         default: []
     },
+    points: {
+        type: Number,
+        default: 0,
+        min: 0
+    },
     creatorId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',

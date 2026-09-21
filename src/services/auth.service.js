@@ -40,6 +40,11 @@ export const loginUser = async (email, password) => {
 
 // Création de l'utilisateur
 export const createUser = async (data) => {
+    // Le hachage rend le mot de passe toujours long : on vérifie donc avant
+    if (typeof data.password !== 'string' || data.password.length < 6) {
+        throw new Error('Le mot de passe doit contenir au moins 6 caractères');
+    }
+
     const existingUser = await User.findOne({ email: data.email });
     if (existingUser) throw new Error('Cet email est déjà utilisé');
 

@@ -17,6 +17,8 @@ export const registerUser = async (req, res) => {
     const user = await authService.createUser(req.body);
     res.status(201).json(user);
   } catch (error) {
-    res.status(409).json({ message: 'Impossible de créer l’utilisateur', error: error.message });
+    // 409 uniquement si l'email est déjà pris, 400 pour les autres erreurs
+    const status = error.message === 'Cet email est déjà utilisé' ? 409 : 400;
+    res.status(status).json({ message: 'Impossible de créer l’utilisateur', error: error.message });
   }
 };

@@ -1,5 +1,6 @@
 import { Family } from "../models/family.model.js";
 import { getLevelInfo } from "../config/levels.js";
+import { TROPHIES } from "../config/trophies.js";
 
 // Échappe les caractères spéciaux pour les utiliser dans une regex
 const escapeRegex = (text) => String(text).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -20,6 +21,10 @@ const formatFamily = (family, joinRequests = family.joinRequests) => ({
   topics: family.topics,
   points: family.points,
   levelInfo: getLevelInfo(family.points),
+  trophies: family.unlockedTrophies.map((t) => ({
+    ...TROPHIES.find((trophy) => trophy.id === t.id),
+    unlockedAt: t.unlockedAt,
+  })),
   creatorId: family.creatorId,
   joinRequests,
 });

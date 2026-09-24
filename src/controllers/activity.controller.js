@@ -9,6 +9,22 @@ export const createActivity = async (req, res) => {
     }
 };
 
+export const joinActivity = async (req, res) => {
+  try {
+    const activityId = req.params.id;
+    const { userId } = req.body;
+
+    if (!userId) {
+      return res.status(400).json({ message: 'userId manquant' });
+    }
+
+    const result = await activityService.joinActivity(activityId, userId);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
 export const getActivity = async (req, res) => {
     try {
         const activityId = req.params.id;

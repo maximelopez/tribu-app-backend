@@ -22,6 +22,12 @@ const familySchema = new mongoose.Schema({
         default: 0,
         min: 0
     },
+    unlockedTrophies: [
+        {
+            id: { type: String, required: true },
+            unlockedAt: { type: Date, default: Date.now }
+        }
+    ],
     creatorId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',

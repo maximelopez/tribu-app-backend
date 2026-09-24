@@ -35,8 +35,8 @@ const userSchema = new mongoose.Schema({
     },
     theme: {
         type: String,
-        enum: ['vert', 'jaune', 'orange'],
-        default: 'vert'
+        enum: ['green', 'orange', 'red'],
+        default: 'green'
     },
     birthdate: {
         type: Date,

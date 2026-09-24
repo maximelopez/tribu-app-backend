@@ -1,4 +1,5 @@
 import { Family } from "../models/family.model.js";
+import { User } from "../models/user.model.js";
 import { getLevelInfo } from "../config/levels.js";
 import { TROPHIES } from "../config/trophies.js";
 
@@ -90,6 +91,11 @@ export const requestToJoinFamily = async (familyId, userId) => {
   const family = await Family.findById(familyId);
   if (!family) throw new Error("Famille non trouvée");
 
+  // Un utilisateur qui a déjà une Tribu ne peut pas en demander une autre
+  const user = await User.findById(userId);
+  if (!user) throw new Error("Utilisateur non trouvé");
+  if (user.familyId) throw new Error("Vous faites déjà partie d'une Tribu");
+
   // Vérification si déjà demandé
   if (family.joinRequests.some((id) => id.toString() === userId)) {
     throw new Error("Vous avez déjà envoyé une demande à cette famille");
@@ -104,6 +110,8 @@ export const requestToJoinFamily = async (familyId, userId) => {
 };
 
 // Accepter ou refuser une demande
+// Retourne la famille mise à jour et, en cas d'acceptation, les autres familles
+// qui avaient une demande de cet utilisateur (pour prévenir leurs créateurs).
 export const handleJoinRequest = async (familyId, userId, accept) => {
   const family = await Family.findById(familyId);
   if (!family) throw new Error("Famille non trouvée");
@@ -112,13 +120,43 @@ export const handleJoinRequest = async (familyId, userId, accept) => {
     throw new Error("Aucune demande trouvée pour cet utilisateur");
   }
 
-  // Supprime la demande
-  family.joinRequests = family.joinRequests.filter((id) => id.toString() !== userId);
-  await family.save();
+  let otherFamilies = [];
+
+  if (accept) {
+    // 1. On rattache d'abord l'utilisateur, seulement s'il n'a pas déjà une Tribu.
+    //    Le filtre { familyId: null } rend l'opération sûre même si deux créateurs
+    //    acceptent en même temps : un seul des deux réussira.
+    const joinedUser = await User.findOneAndUpdate(
+      { _id: userId, familyId: null },
+      { familyId },
+      { new: true }
+    );
+
+    if (!joinedUser) {
+      // Déjà dans une Tribu (ou supprimé) : la demande n'a plus lieu d'être
+      await Family.updateOne({ _id: familyId }, { $pull: { joinRequests: userId } });
+      throw new Error("Cet utilisateur fait déjà partie d'une Tribu");
+    }
+
+    // 2. Les autres familles où il avait aussi demandé à entrer
+    otherFamilies = await Family.find(
+      { _id: { $ne: familyId }, joinRequests: userId },
+      { creatorId: 1 }
+    );
+
+    // 3. On retire toutes ses demandes en attente (celle-ci comprise)
+    await Family.updateMany({ joinRequests: userId }, { $pull: { joinRequests: userId } });
+  } else {
+    // Refus : on retire uniquement cette demande
+    await Family.updateOne({ _id: familyId }, { $pull: { joinRequests: userId } });
+  }
 
   const populatedFamily = await Family.findById(familyId).populate("joinRequests", "name");
 
-  return formatFamily(populatedFamily, formatJoinRequests(populatedFamily.joinRequests));
+  return {
+    family: formatFamily(populatedFamily, formatJoinRequests(populatedFamily.joinRequests)),
+    otherFamilies: otherFamilies.map((f) => ({ id: f._id.toString(), creatorId: f.creatorId.toString() })),
+  };
 };
 
 // Supprimer une famille

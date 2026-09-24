@@ -122,17 +122,20 @@ export const respondJoinRequest = async (req, res) => {
       return res.status(400).json({ message: 'accept doit être un booléen' });
     }
 
-    const family = await familyService.handleJoinRequest(familyId, userId, accept);
+    // Le service rattache l'utilisateur à la famille et nettoie ses autres demandes
+    const { family, otherFamilies } = await familyService.handleJoinRequest(familyId, userId, accept);
 
     if (accept) {
-      // Associer l'utilisateur à la famille
-      await User.findByIdAndUpdate(userId, { familyId });
-
       // Notifier l'utilisateur
       io.to(`user:${userId}`).emit('familyAccepted', { familyId });
 
       // Notifier les membres de la famille
       io.to(`family:${familyId}`).emit('memberJoined', { userId });
+
+      // Prévenir les créateurs des autres familles que la demande n'existe plus
+      otherFamilies.forEach(({ id, creatorId }) => {
+        io.to(`user:${creatorId}`).emit('joinRequestRemoved', { familyId: id, userId });
+      });
     } else {
       // Notifier l'utilisateur du refus
       io.to(`user:${userId}`).emit('familyRejected', { familyId });

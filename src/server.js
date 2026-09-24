@@ -34,7 +34,7 @@ io.on('connection', (socket) => {
     try {
       const message = await chatService.createMessage(familyId, sender, content);
 
-      const populatedMessage = await message.populate('sender', 'name');
+      const populatedMessage = await message.populate('sender', 'name avatar');
 
       io.to(`family:${familyId}`).emit('newMessage', populatedMessage);
     } catch (error) {

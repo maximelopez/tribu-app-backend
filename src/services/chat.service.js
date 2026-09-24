@@ -9,6 +9,6 @@ export const createMessage = async (familyId, sender, content) => {
 // Récupère tous les messages d'une famille
 export const getMessagesByFamily = async (familyId) => {
   return await Chat.find({ familyId })
-    .populate('sender', 'name')
+    .populate('sender', 'name avatar')
     .sort({ createdAt: 1 });
 };
